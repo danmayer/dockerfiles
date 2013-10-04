@@ -10,6 +10,13 @@ run	pip install whisper
 run	pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/lib" carbon
 run	pip install --install-option="--prefix=/var/lib/graphite" --install-option="--install-lib=/var/lib/graphite/webapp" graphite-web
 
+RUN mkdir /data /var/run/sshd
+
+RUN apt-get install -q -y wget libssl-dev
+
+RUN wget https://github.com/etsy/statsd/archive/v0.6.0.tar.gz --no-check-certificate
+RUN tar -xvzf v0.6.0.tar.gz
+
 # Add system service config
 add	./nginx.conf /etc/nginx/nginx.conf
 add	./supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -26,6 +33,10 @@ run	chmod 0775 /var/lib/graphite/storage /var/lib/graphite/storage/whisper
 run	chmod 0664 /var/lib/graphite/storage/graphite.db
 run	cd /var/lib/graphite/webapp/graphite && python manage.py syncdb --noinput
 
+ADD config.js /data/config.js
+
+RUN cat /data/config.js
+
 # Nginx
 expose	:80
 # Carbon line receiver port
@@ -34,6 +45,10 @@ expose	:2003
 expose	:2004
 # Carbon cache query port
 expose	:7002
+
+# statsd
+EXPOSE 8125:8125/udp
+EXPOSE 8126:8126
 
 cmd	["/usr/bin/supervisord"]
 
