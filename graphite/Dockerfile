@@ -34,6 +34,8 @@ run	chmod 0664 /var/lib/graphite/storage/graphite.db
 run	cd /var/lib/graphite/webapp/graphite && python manage.py syncdb --noinput
 
 ADD config.js /data/config.js
+run	chown -R www-data /data
+run	chown -R www-data /data/config.js
 
 RUN cat /data/config.js
 
