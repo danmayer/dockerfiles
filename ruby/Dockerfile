@@ -2,6 +2,9 @@
 
 FROM ubuntu
 
+#required for redis server
+RUN echo "deb http://archive.ubuntu.com/ubuntu precise main universe" > /etc/apt/sources.list
+
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get -y update
 
 #make the base sshable
